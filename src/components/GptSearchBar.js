@@ -3,7 +3,7 @@ import lang from "../utils/languageConstants";
 import { useRef } from "react";
 import openai from "../utils/openai";
 import { API_OPTIONS } from "../utils/constants";
-import { addGptMovieResult } from "../utils/gptSlice";
+import { addGptMovieResult, toggleGptIsSearching } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
@@ -24,6 +24,11 @@ const GptSearchBar = () => {
   };
 
   const handleGptSearchClick = async () => {
+    dispatch(toggleGptIsSearching({ isGptSearching: true }));
+    dispatch(
+      addGptMovieResult({ movieNames: null, movieResults: null})
+    );
+
     const searchOpenAIText = searchText.current.value;
     console.log(searchOpenAIText);
 
@@ -40,8 +45,6 @@ const GptSearchBar = () => {
     if (!gptResults.choices) {
       /* Error Handling */
     }
-
-    console.log(gptResults.choices?.[0]?.message?.content);
     const gptMovies = (gptResults.choices?.[0]?.message?.content).split(",");
 
     // For each movie I will search TMDB API
@@ -56,6 +59,8 @@ const GptSearchBar = () => {
     dispatch(
       addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
     );
+
+    dispatch(toggleGptIsSearching({ isGptSearching: false }));
   };
 
   return (

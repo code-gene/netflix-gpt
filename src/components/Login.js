@@ -25,7 +25,6 @@ const Login = () => {
     setErrorMessage(message);
 
     console.group(message);
-    console.log(email.current.value, password.current.value);
     if (message) return;
 
     if (!isSignInForm) {
@@ -38,6 +37,7 @@ const Login = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log("Usercred", user);
+          console.log("User signed up", user);
           updateProfile(user, {
             displayName: name.current.value,
             photoURL: USER_AVATAR,
@@ -64,15 +64,14 @@ const Login = () => {
         });
     } else {
       // Sign In Logic
-      console.log("sign in");
       signInWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          // Signed in
           const user = userCredential.user;
+          console.log("User signed in", user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -90,7 +89,7 @@ const Login = () => {
     <div>
       <Header />
       <div className="absolute">
-        <img className="h-screen w-screen object-cover" src={BG_URL} alt="logo" />
+        <img className="w-screen object-cover" src={BG_URL} alt="logo" />
       </div>
       <form
         onSubmit={(e) => e.preventDefault()}

@@ -17,7 +17,8 @@ export const BG_URL =
 
 export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500";
 
-export const OPENAI_KEY = process.env.REACT_OPENAI_API_KEY;
+// export const OPENAI_KEY = process.env.REACT_OPENAI_API_KEY;
+export const OPENAI_KEY = "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";
 
 export const SUPPORTED_LANGUAGES = [
   { identifier: "en", name: "English" },
