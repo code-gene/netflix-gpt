@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
-import MovieList from "./MovieList";
-import Shimmer from "./Shimmer";
+import MovieList from "../Browse/MovieList";
+import Shimmer from "../Shimmer";
 
 const ShimmerLoader = () => (
   <div className="flex flex-wrap justify-center p-2 m-2 bg-black text-white bg-opacity-90">

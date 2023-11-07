@@ -1,3 +1,9 @@
+/**
+ * The above code is a React component for a login form that allows users to sign in or sign up using
+ * Firebase authentication.
+ * @returns The Login component is being returned.
+ */
+
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/formValidation";
@@ -7,18 +13,22 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
 import { BG_URL, USER_AVATAR } from "../utils/constants";
+import useLocalStorageUser from "../hooks/useLocalStorageUser";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-  const dispatch = useDispatch();
 
   const name = useRef(null);
   const email = useRef(null);
   const password = useRef(null);
+
+  const navigate = useNavigate();
+
+  const { userInLocal, setUser } = useLocalStorageUser();
+  console.log("[Login Screen] User stored in local storage", userInLocal);
 
   const handleButtonClick = () => {
     const message = checkValidData(email.current.value, password.current.value);
@@ -27,31 +37,24 @@ const Login = () => {
     console.group(message);
     if (message) return;
 
+    // Sign Up Logic
     if (!isSignInForm) {
-      // Sign Up Logic
       createUserWithEmailAndPassword(
         auth,
         email.current.value,
         password.current.value
       )
         .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("Usercred", user);
-          console.log("User signed up", user);
-          updateProfile(user, {
+          const signedUpUser = userCredential.user;
+          console.log("User signed up successfully", signedUpUser);
+          
+          updateProfile(signedUpUser, {
             displayName: name.current.value,
             photoURL: USER_AVATAR,
           })
             .then(() => {
-              const { uid, email, displayName, photoURL } = auth.currentUser;
-              dispatch(
-                addUser({
-                  uid: uid,
-                  email: email,
-                  displayName: displayName,
-                  photoURL: photoURL
-                })
-              );
+              setUser(auth.currentUser);
+              navigate("/browse");
             })
             .catch((error) => {
               setErrorMessage(error.message);
@@ -70,8 +73,11 @@ const Login = () => {
         password.current.value
       )
         .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("User signed in", user);
+          const signedInUser = userCredential.user;
+          
+          console.log("User signed in", signedInUser);
+          setUser(signedInUser);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
